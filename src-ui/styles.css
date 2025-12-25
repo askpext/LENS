@@ -1,0 +1,193 @@
+:root {
+    --bg-deep: #050505;
+    --text-main: #e0e0e0;
+    --text-muted: #666;
+    --border-color: #333;
+    --glass-bg: rgba(20, 20, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent: #ffffff;
+    --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- Noir Atmosphere --- */
+.noir-ambient {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none;
+}
+.fog {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.1;
+    background: white; animation: drift 20s infinite alternate ease-in-out;
+}
+.fog-1 { top: -20%; left: -10%; width: 600px; height: 600px; }
+.scanline {
+    width: 100%; height: 100px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.02), transparent);
+    position: absolute; top: -100px; animation: scan 8s linear infinite;
+}
+@keyframes scan { 0% { top: -100px; } 100% { top: 100%; } }
+
+/* --- Layout Utility --- */
+.app { max-width: 1000px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+.hidden { display: none !important; }
+
+/* --- Typography --- */
+h1 { font-weight: 200; letter-spacing: 4px; text-transform: uppercase; font-size: 1.8rem; }
+.subtitle { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.5rem; }
+.label-tiny {
+    font-family: var(--font-mono); font-size: 0.65rem; color: #555; letter-spacing: 1px;
+    margin-bottom: 1rem; display: block; text-transform: uppercase;
+}
+
+/* --- The Bento Grid HUD --- */
+.bento-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1rem;
+    grid-template-areas:
+        "visual visual badge"
+        "visual visual gauges"
+        "stats details audio";
+}
+
+@media (max-width: 800px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas: "visual" "badge" "gauges" "stats" "details" "audio";
+    }
+}
+
+.bento-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 4px; /* Sharper corners for HUD look */
+    position: relative;
+    backdrop-filter: blur(12px);
+}
+
+.area-visual { grid-area: visual; display: flex; flex-direction: column; }
+.area-badge { grid-area: badge; }
+.area-gauges { grid-area: gauges; }
+.area-stats { grid-area: stats; display: flex; flex-direction: column; justify-content: space-around; gap: 1rem; }
+.area-details { grid-area: details; }
+.area-audio { grid-area: audio; }
+
+/* --- 1. Visual Aspect Box --- */
+.aspect-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    border: 1px dashed #333;
+    min-height: 200px;
+    padding: 20px;
+}
+
+.aspect-box {
+    border: 2px solid white;
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    /* Max limits to ensure it fits in container */
+    max-width: 100%;
+    max-height: 180px; 
+}
+
+/* Little corner markers for the box */
+.aspect-box::after {
+    content: ''; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+    border: 1px solid rgba(255,255,255,0.2); pointer-events: none;
+}
+
+#resText {
+    background: black; color: white; padding: 4px 8px; font-family: var(--font-mono); font-size: 0.8rem;
+}
+
+.aspect-data {
+    display: flex; justify-content: space-between; margin-top: 1rem; font-family: var(--font-mono);
+}
+.dim { opacity: 0.5; }
+
+/* --- 2. Tech Badge --- */
+.badge-content { text-align: center; padding: 1rem 0; }
+.tech-badge {
+    font-size: 3rem; font-weight: 800; letter-spacing: -2px; line-height: 1;
+    background: linear-gradient(180deg, #fff 0%, #888 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.badge-details { margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; }
+.tag { border: 1px solid #444; padding: 2px 6px; font-size: 0.7rem; border-radius: 3px; }
+
+/* --- 3. Gauges --- */
+.gauge-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; }
+.gauge-value { font-family: var(--font-mono); color: white; }
+
+.gauge-track {
+    height: 6px; background: #222; width: 100%; position: relative; overflow: hidden;
+}
+.gauge-fill {
+    height: 100%; background: white; box-shadow: 0 0 10px white;
+    width: 0%; transition: width 1s ease-out;
+}
+.gauge-track.simple .gauge-fill { width: 100%; background: #444; box-shadow: none; }
+
+.gauge-ruler {
+    display: flex; justify-content: space-between; margin-top: 4px;
+    font-size: 0.6rem; color: #444; font-family: var(--font-mono);
+}
+
+/* --- 4. Mini Stats --- */
+.mini-stat { border-left: 2px solid white; padding-left: 1rem; }
+.mini-stat .label { display: block; font-size: 0.7rem; color: #666; margin-bottom: 2px; }
+.mini-stat .value { font-family: var(--font-mono); font-size: 1.2rem; }
+
+/* --- 5. Data Lists --- */
+.tech-list { display: grid; gap: 8px; font-size: 0.8rem; font-family: var(--font-mono); }
+.tech-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1a1a1a; padding-bottom: 4px; }
+.tech-row span:last-child { color: #aaa; }
+
+/* --- 6. Audio Grid --- */
+.audio-grid { display: grid; gap: 10px; }
+.audio-module {
+    border: 1px solid #333; background: rgba(0,0,0,0.5); padding: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.audio-type { font-weight: bold; font-size: 0.9rem; }
+.audio-meta { font-family: var(--font-mono); font-size: 0.75rem; color: #888; }
+
+/* --- Drop Zone & Buttons --- */
+.drop-zone {
+    border: 1px dashed #444; padding: 4rem; text-align: center; cursor: pointer; transition: 0.3s;
+}
+.drop-zone:hover { border-color: white; background: rgba(255,255,255,0.05); }
+
+.actions { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+button {
+    background: transparent; border: 1px solid #fff; color: #fff;
+    padding: 10px 24px; cursor: pointer; font-family: var(--font-mono);
+    text-transform: uppercase; font-size: 0.8rem; transition: 0.2s;
+}
+button:hover { background: white; color: black; }
+.btn-secondary { border-color: #444; color: #888; }
+.btn-secondary:hover { border-color: #fff; color: #fff; background: transparent; }
+
+/* --- Loading --- */
+.loading-section { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.blink { animation: blink 1s infinite; font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.9rem; margin-bottom: 1rem; }
+@keyframes blink { 50% { opacity: 0; } }
+.loading-bar { width: 200px; height: 2px; background: #333; margin: 0 auto; }
+.loading-fill { width: 50%; height: 100%; background: white; animation: load 1s infinite alternate; }
+@keyframes load { from { width: 0%; transform: translateX(0); } to { width: 100%; transform: translateX(100px); } }

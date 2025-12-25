@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LENS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="noir-ambient">
+        <div class="fog fog-1"></div>
+        <div class="fog fog-2"></div>
+        <div class="scanline"></div>
+    </div>
+
+    <div class="app">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">▶</div>
+                <h1>LENS</h1>
+            </div>
+            <p class="subtitle">WAITING_FOR_INPUT</p>
+        </header>
+
+        <div id="uploadSection" class="upload-section">
+            <div id="ffmpegStatus" class="hidden status-indicator">
+                <div class="loading-spinner small"></div>
+                <p>INITIALIZING FFMPEG...</p>
+            </div>
+            
+            <div id="dropZone" class="drop-zone glass-panel">
+                <div class="drop-content">
+                    <div class="icon-frame">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h2>DROP SOURCE FILE</h2>
+                    <div class="supported-formats">
+                        <span>MP4</span><span>MKV</span><span>MOV</span><span>AVI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading-section hidden">
+            <div class="scanner-line"></div>
+            <h3 class="blink">ANALYZING BITSTREAM</h3>
+            <div class="loading-bar"><div class="loading-fill"></div></div>
+        </div>
+
+        <div id="results" class="results-section hidden">
+            
+            <div class="bento-grid">
+                
+                <div class="bento-item area-visual glass-panel">
+                    <div class="label-tiny">ASPECT_VISUALIZER</div>
+                    <div class="aspect-container">
+                        <div id="aspectBox" class="aspect-box">
+                            <span id="resText">1920x1080</span>
+                        </div>
+                    </div>
+                    <div class="aspect-data">
+                        <span id="aspectRatioText">16:9</span>
+                        <span class="dim">PAR 1:1</span>
+                    </div>
+                </div>
+
+                <div class="bento-item area-badge glass-panel">
+                    <div class="label-tiny">CODEC_PROFILE</div>
+                    <div class="badge-content">
+                        <div id="codecBadge" class="tech-badge">HEVC</div>
+                        <div class="badge-details">
+                            <span id="profileText">Main 10</span>
+                            <span id="containerText" class="tag">MKV</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-item area-gauges glass-panel">
+                    <div class="label-tiny">QUALITY_METRICS</div>
+                    
+                    <div class="gauge-wrapper">
+                        <div class="gauge-header">
+                            <span>BITRATE</span>
+                            <span id="bitrateValue" class="gauge-value">0 kb/s</span>
+                        </div>
+                        <div class="gauge-track">
+                            <div id="bitrateBar" class="gauge-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-ruler">
+                            <span>WEB</span><span>HD</span><span>BLURAY</span><span>MAX</span>
+                        </div>
+                    </div>
+
+                    <div class="gauge-wrapper" style="margin-top: 1.5rem;">
+                        <div class="gauge-header">
+                            <span>FILE SIZE</span>
+                            <span id="sizeValue" class="gauge-value">0 MB</span>
+                        </div>
+                        <div class="gauge-track simple">
+                            <div class="gauge-fill static-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-item area-stats glass-panel">
+                    <div class="mini-stat">
+                        <span class="label">DURATION</span>
+                        <span id="durationText" class="value">00:00:00</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="label">FRAMERATE</span>
+                        <span id="fpsText" class="value">00.00</span>
+                    </div>
+                </div>
+
+                <div class="bento-item area-details glass-panel">
+                    <div class="label-tiny">STREAM_DATA</div>
+                    <div id="advancedInfo" class="tech-list"></div>
+                </div>
+
+                <div class="bento-item area-audio glass-panel">
+                    <div class="label-tiny">AUDIO_CHANNELS</div>
+                    <div id="audioGrid" class="audio-grid"></div>
+                </div>
+
+            </div>
+
+            <div class="actions">
+                <button id="analyzeAnother" class="btn-secondary">[ RESET ]</button>
+                <button id="exportJson" class="btn-primary">EXPORT_LOG</button>
+            </div>
+        </div>
+
+        <div id="error" class="error-section hidden glass-panel">
+            <h3>CRITICAL ERROR</h3>
+            <p id="errorMessage"></p>
+            <button id="errorRetry" class="btn-secondary">RETRY</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
