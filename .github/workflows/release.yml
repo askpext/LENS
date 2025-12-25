@@ -1,35 +1,4 @@
-name: Release LENS
-
-# This triggers the build only when you push a tag starting with 'v' (e.g. v0.1.0)
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  create-release:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    outputs:
-      release_id: ${{ steps.create_release.outputs.id }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: LENS ${{ github.ref }}
-          body: "Automated release for LENS Inspector."
-          draft: false
-          prerelease: false
-
-  build-tauri:
+build-tauri:
     needs: create-release
     permissions:
       contents: write
@@ -37,20 +6,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest' # Builds .dmg / .app
+          - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
           - platform: 'macos-latest' 
             args: '--target x86_64-apple-darwin'
-          - platform: 'ubuntu-22.04' # Builds .deb / .AppImage
+          - platform: 'ubuntu-22.04'
             args: ''
-          - platform: 'windows-latest' # Builds .exe / .msi
+          - platform: 'windows-latest'
             args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies (Linux only)
+      - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
@@ -66,15 +35,8 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: Sync node version
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm' 
-
-      # Make sure you use the command you use locally (npm, yarn, or pnpm)
-      - name: Install frontend dependencies
-        run: npm install
+      # REMOVED: "Sync node version" with cache: 'npm' (This was causing the crash)
+      # REMOVED: "Install frontend dependencies" (You don't have any to install)
 
       - name: Build LENS
         uses: tauri-apps/tauri-action@v0
